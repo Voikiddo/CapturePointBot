@@ -1,0 +1,66 @@
+[
+    {
+        "name": "wood",
+        "damage": {
+            "leather": 6,
+            "chain": 4,
+            "iron": 3,
+            "diamond": 1
+        } 
+    },
+    {
+        "name": "stone",
+        "damage": {
+            "leather": 8,
+            "chain": 6,
+            "iron": 4,
+            "diamond": 3
+        } 
+    },
+    {
+        "name": "iron",
+        "damage": {
+            "leather": 12,
+            "chain": 8,
+            "iron": 6,
+            "diamond": 4
+        } 
+    },
+    {
+        "name": "diamond",
+        "damage": {
+            "leather": 16,
+            "chain": 12,
+            "iron": 8,
+            "diamond": 6
+        } 
+    },
+    {
+        "name": "trident",
+        "damage": {
+            "leather": 8,
+            "chain": 7,
+            "iron": 5,
+            "diamond": 4
+        } 
+    },
+    {
+        "name": "molotov",
+        "damage": {
+            "leather": 5,
+            "chain": 5,
+            "iron": 5,
+            "diamond": 5
+        },
+        "effects": ["Burns 1 hp for 5 turns unless extinguished"]
+    },
+    {
+        "name": "onyx",
+        "damage": {
+            "leather": 30,
+            "chain": 25,
+            "iron": 20,
+            "diamond": 15
+        }
+    }
+]
