@@ -50,7 +50,7 @@ client.on(Events.MessageCreate, async message => {
 
     if (!fullMessage.startsWith("?attack")) return false;
 
-    console.log(`@${message.author.id} commanded: ${fullMessage}`);
+    console.log(`@${message.author.id} commanded: ${fullMessage}`)
 
     // cooldown handle
 
@@ -69,7 +69,7 @@ client.on(Events.MessageCreate, async message => {
 
         if (now < expirationTime) {
             const expiredTimestamp = Math.round(expirationTime / 1000);
-            return message.reply(`Please wait, you are on a cooldown. You can send query again <t:${expiredTimestamp}:R>.`);
+            return message.reply(`Please wait, you are on a cooldown. You can send query again <t:${expiredTimestamp}:R>.`).catch(error => {console.error(error.message)});
         }
     }
 
@@ -84,7 +84,7 @@ client.on(Events.MessageCreate, async message => {
     const weapon = WeaponDamages.find(w => w.name === weaponName);
 
     if (!weapon) {
-        return message.reply('Weapon not found!');
+        return message.reply('Weapon not found!').catch(error => {console.error(error.message)});
     }
 
     const replyEmbed = new EmbedBuilder()
@@ -108,7 +108,7 @@ client.on(Events.MessageCreate, async message => {
         )
     }
 
-    return message.channel.send({embeds: [replyEmbed]});
+    return message.channel.send({embeds: [replyEmbed]}).catch(error => {console.error(error.message)});
 });
 
 client.login(token);
