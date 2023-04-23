@@ -4,6 +4,9 @@ const { Client, Collection, Events, GatewayIntentBits, Partials, EmbedBuilder  }
 require("dotenv").config()
 const token = process.env.BOT_TOKEN
 
+const { replyWeapon } = require("./commands/damage.js")
+const { replyArmour } = require("./commands/armour.js")
+
 const WeaponDamages = JSON.parse(fs.readFileSync('damage.json'))
 
 const express = require("express");
@@ -39,76 +42,28 @@ client.on(Events.MessageCreate, async message => {
     if (message.partial) {
         await message.fetch()
             .then(m => {
-                fullMessage = m.content;
+                fullMessage = m.content.toLowerCase();
             })
             .catch(error => {
                 console.log('Something went wrong when fetching the message: ', error);
             });
     } else {
-        fullMessage = message.content
+        fullMessage = message.content.toLowerCase();
     }
 
-    if (!fullMessage.startsWith("?attack")) return false;
+    if (!fullMessage.startsWith("?")) return false;
 
-    console.log(`@${message.author.id} commanded: ${fullMessage}`)
+    console.log(`${message.author.username}[@${message.author.id}] commanded: ${fullMessage}`)
 
     // cooldown handle
+    
+    if (fullMessage.startsWith("?attack")) return replyWeapon(message, fullMessage, client, WeaponDamages);
+    if (fullMessage.startsWith("?weapon")) return replyWeapon(message, fullMessage, client, WeaponDamages);
+    
+    if (fullMessage.startsWith("?armor")) return replyArmour(message, fullMessage, client, WeaponDamages);
+    if (fullMessage.startsWith("?armour")) return replyArmour(message, fullMessage, client, WeaponDamages);
 
-    const { cooldowns } = client;
-    if (!cooldowns.has('attackQuery')) {
-        cooldowns.set('attackQuery', new Collection());
-    }
-
-    const now = Date.now();
-    const timestamps = cooldowns.get('attackQuery');
-    const defaultCooldownDuration = 3;
-    const cooldownAmount = defaultCooldownDuration * 1000;
-
-    if (timestamps.has(message.author.id)) {
-        const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
-
-        if (now < expirationTime) {
-            const expiredTimestamp = Math.round(expirationTime / 1000);
-            return message.reply(`Please wait, you are on a cooldown. You can send query again <t:${expiredTimestamp}:R>.`).catch(error => {console.error(error.message)});
-        }
-    }
-
-    timestamps.set(message.author.id, now);
-    setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
-
-    // actual command
-
-    const commandContent = fullMessage.split(" ")
-    if (!commandContent.length == 2) return false;
-    const weaponName = commandContent[1]
-    const weapon = WeaponDamages.find(w => w.name === weaponName);
-
-    if (!weapon) {
-        return message.reply('Weapon not found!').catch(error => {console.error(error.message)});
-    }
-
-    const replyEmbed = new EmbedBuilder()
-        .setTitle(`Weapon: ${weaponName}`)
-        .addFields(
-            {
-                name: 'Damage done to each armor:',
-                value: `leather > ${weapon.damage.leather} hp\n`
-                     + `chain   > ${weapon.damage.chain} hp\n`
-                     + `iron    > ${weapon.damage.iron} hp\n`
-                     + `diamond > ${weapon.damage.diamond} hp\n`
-            }
-        )
-
-    if (weapon.effects) {
-        replyEmbed.addFields(
-            {
-                name: 'Additional Effect:',
-                value: weapon.effects.join('\n')
-            }
-        )
-    }
-
-    return message.channel.send({embeds: [replyEmbed]}).catch(error => {console.error(error.message)});
+    return message.reply('Command not found!').catch(error => {console.error(error.message)});
 });
 
 client.login(token);
